@@ -24,6 +24,17 @@ public class DietBot : ActivityHandler
         _logger = logger;
     }
 
+    public override async Task OnTurnAsync(
+        ITurnContext turnContext,
+        CancellationToken cancellationToken = default)
+    {
+        await base.OnTurnAsync(turnContext, cancellationToken);
+
+        // Save any state changes that might have occurred during the turn.
+        await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
+        await _userState.SaveChangesAsync(turnContext, false, cancellationToken);
+    }
+
     protected override async Task OnMembersAddedAsync(
         IList<ChannelAccount> membersAdded,
         ITurnContext<IConversationUpdateActivity> turnContext,
@@ -37,17 +48,8 @@ public class DietBot : ActivityHandler
                 await turnContext.SendActivityAsync(MessageFactory.Text(welcomeText, welcomeText), cancellationToken);
             }
         }
-    }
 
-    public override async Task OnTurnAsync(
-        ITurnContext turnContext,
-        CancellationToken cancellationToken = default)
-    {
-        await base.OnTurnAsync(turnContext, cancellationToken);
-
-        // Save any state changes that might have occurred during the turn.
-        await _conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
-        await _userState.SaveChangesAsync(turnContext, false, cancellationToken);
+        await _dialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>(nameof(DialogState)), cancellationToken);
     }
 
     protected override async Task OnMessageActivityAsync(

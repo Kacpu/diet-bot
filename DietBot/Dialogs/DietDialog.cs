@@ -6,15 +6,20 @@ using System.Threading;
 using System.Collections.Generic;
 using Microsoft.Bot.Schema;
 using System.Linq;
+using DietBot.ComputerVision;
+using System.Net.Http;
 
 namespace DietBot.Dialogs;
 
 public class DietDialog : ComponentDialog
 {
     private readonly IStatePropertyAccessor<Diet> _dietAccessor;
+    private readonly IComputerVisionService _computerVisionService;
 
-    public DietDialog(UserState userState) : base(nameof(DietDialog))
+    public DietDialog(UserState userState, IComputerVisionService computerVisionService) : base(nameof(DietDialog))
     {
+        _computerVisionService = computerVisionService;
+
         _dietAccessor = userState.CreateProperty<Diet>("Diet");
 
         var waterfallSteps = new WaterfallStep[]
@@ -55,7 +60,9 @@ public class DietDialog : ComponentDialog
         {
             try
             {
+                var extractedText = await _computerVisionService.ExtractText(label.ContentUrl, cancellationToken);
                 await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(label, "This is your label."), cancellationToken);
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(extractedText), cancellationToken);
             }
             catch
             {

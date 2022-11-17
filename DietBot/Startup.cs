@@ -3,6 +3,7 @@
 //
 // Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.18.1
 
+using DietBot.ComputerVision;
 using DietBot.Dialogs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace DietBot
 {
@@ -49,6 +51,11 @@ namespace DietBot
             services.AddSingleton<ConversationState>();
 
             services.AddSingleton<DietDialog>();
+
+            services.AddSingleton<IComputerVisionService, ComputerVisionService>();
+
+            services.Configure<ComputerVisionOptions>(
+                Configuration.GetSection(ComputerVisionOptions.Section));
 
             // Use partitioned CosmosDB for storage, instead of in-memory storage.
             services.AddSingleton<IStorage>(
