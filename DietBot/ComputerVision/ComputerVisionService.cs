@@ -41,7 +41,7 @@ public class ComputerVisionService : IComputerVisionService
 
         do
         {
-            results = await client.GetReadResultAsync(Guid.Parse(operationId));
+            results = await client.GetReadResultAsync(Guid.Parse(operationId), cancellationToken: cancellationToken);
         }
         while (results.Status == OperationStatusCodes.Running ||
             results.Status == OperationStatusCodes.NotStarted);

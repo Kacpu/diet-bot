@@ -41,8 +41,8 @@ public class DietDialog : ComponentDialog
     {
         var promptOptions = new PromptOptions
         {
-            Prompt = MessageFactory.Text("Please attach a label."),
-            RetryPrompt = MessageFactory.Text("The attachment must be a jpeg/png image file."),
+            Prompt = MessageFactory.Text("Please attach a label image."),
+            RetryPrompt = MessageFactory.Text("The label must be a jpeg/png image file."),
         };
 
         return await stepContext.PromptAsync(nameof(AttachmentPrompt), promptOptions, cancellationToken);
@@ -52,7 +52,7 @@ public class DietDialog : ComponentDialog
     {
         stepContext.Values["label"] = ((IList<Attachment>)stepContext.Result)?.FirstOrDefault();
 
-        await stepContext.Context.SendActivityAsync(MessageFactory.Text("Thanks. Label uploaded."), cancellationToken);
+        await stepContext.Context.SendActivityAsync(MessageFactory.Text("Thanks. Please wait while the label is analyzed."), cancellationToken);
 
         var label = (Attachment)stepContext.Values["label"];
 
@@ -61,19 +61,22 @@ public class DietDialog : ComponentDialog
             try
             {
                 var extractedText = await _computerVisionService.ExtractText(label.ContentUrl, cancellationToken);
-                await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(label, "This is your label."), cancellationToken);
+                //await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(label, "This is your label."), cancellationToken);
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(extractedText), cancellationToken);
             }
             catch
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text("A label was saved but could not be displayed here."), cancellationToken);
+                await stepContext.Context.SendActivityAsync(
+                    MessageFactory.Text("A label was saved but could not be displayed here."), cancellationToken);
             }
         }
 
         return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
     }
 
-    private static async Task<bool> LabelPromptValidatorAsync(PromptValidatorContext<IList<Attachment>> promptContext, CancellationToken cancellationToken)
+    private static async Task<bool> LabelPromptValidatorAsync(
+        PromptValidatorContext<IList<Attachment>> promptContext,
+        CancellationToken cancellationToken)
     {
         if (promptContext.Recognized.Succeeded)
         {
@@ -95,10 +98,12 @@ public class DietDialog : ComponentDialog
         }
         else
         {
-            await promptContext.Context.SendActivityAsync("No attachments received. Proceeding without a profile picture...");
+            //await promptContext.Context.SendActivityAsync(
+            //    "No attachments received. Proceeding without a profile picture...",
+            //    cancellationToken: cancellationToken);
 
             // We can return true from a validator function even if Recognized.Succeeded is false.
-            return true;
+            return false;
         }
     }
 }
