@@ -6,6 +6,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
@@ -39,18 +40,18 @@ namespace DietBot
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, Bots.EchoBot>();
-            
+
             // Use partitioned CosmosDB for storage, instead of in-memory storage.
-services.AddSingleton<IStorage>(
-    new CosmosDbPartitionedStorage(
-        new CosmosDbPartitionedStorageOptions
-        {
-            CosmosDbEndpoint = Configuration.GetValue<string>("CosmosDbEndpoint"),
-            AuthKey = Configuration.GetValue<string>("CosmosDbAuthKey"),
-            DatabaseId = Configuration.GetValue<string>("CosmosDbDatabaseId"),
-            ContainerId = Configuration.GetValue<string>("CosmosDbContainerId"),
-            CompatibilityMode = false,
-        }));
+            services.AddSingleton<IStorage>(
+                new CosmosDbPartitionedStorage(
+                    new CosmosDbPartitionedStorageOptions
+                    {
+                        CosmosDbEndpoint = Configuration.GetValue<string>("CosmosDbEndpoint"),
+                        AuthKey = Configuration.GetValue<string>("CosmosDbAuthKey"),
+                        DatabaseId = Configuration.GetValue<string>("CosmosDbDatabaseId"),
+                        ContainerId = Configuration.GetValue<string>("CosmosDbContainerId"),
+                        CompatibilityMode = false,
+                    }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
