@@ -58,7 +58,6 @@ public class DietBot : ActivityHandler
     {
         _logger.LogInformation("Running dialog with Message Activity.");
 
-        // Run the Dialog with the new message Activity.
         await _dialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>(nameof(DialogState)), cancellationToken);
     }
 }

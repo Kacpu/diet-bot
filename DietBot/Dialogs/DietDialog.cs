@@ -55,7 +55,7 @@ public class DietDialog : ComponentDialog
         var promptOptions = new PromptOptions
         {
             Prompt = MessageFactory.Text("Thank you. Please choose your diet type now."),
-            Choices = ChoiceFactory.ToChoices(Enum.GetNames<DietTypes>()),
+            Choices = ChoiceFactory.ToChoices(Enum.GetNames<DietType>()),
         };
 
         return await stepContext.PromptAsync(nameof(ChoicePrompt), promptOptions, cancellationToken);
@@ -69,9 +69,9 @@ public class DietDialog : ComponentDialog
             MessageFactory.Text("Thanks. Please wait while the label image is analyzed."), cancellationToken);
 
         var labelImage = (Attachment)stepContext.Values["labelImage"];
-        var dietType = (string)stepContext.Values["dietType"];
+        var isDietType = Enum.TryParse<DietType>((string)stepContext.Values["dietType"], out var dietType);
 
-        if (labelImage is not null)
+        if (labelImage is not null && isDietType)
         {
             try
             {

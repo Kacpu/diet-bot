@@ -1,6 +1,6 @@
 ﻿namespace DietBot.Models;
 
-public enum DietTypes
+public enum DietType
 {
     Vegetarian = 0,
     Vegan = 1,
