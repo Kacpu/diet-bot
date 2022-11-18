@@ -1,43 +1,43 @@
-﻿using DietBot.Models;
+﻿using DietBot.ComputerVision;
+using DietBot.Models;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Collections.Generic;
+using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using DietBot.ComputerVision;
-using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DietBot.Dialogs;
 
 public class DietDialog : ComponentDialog
 {
-    private readonly IStatePropertyAccessor<Diet> _dietAccessor;
+    //private readonly IStatePropertyAccessor<Diet> _dietAccessor;
     private readonly IComputerVisionService _computerVisionService;
 
     public DietDialog(UserState userState, IComputerVisionService computerVisionService) : base(nameof(DietDialog))
     {
         _computerVisionService = computerVisionService;
 
-        _dietAccessor = userState.CreateProperty<Diet>("Diet");
+        //_dietAccessor = userState.CreateProperty<Diet>("Diet");
 
         var waterfallSteps = new WaterfallStep[]
         {
-            LabelStepAsync,
+            LabeImagelStepAsync,
+            DietTypeStepAsync,
             SummaryStepAsync
         };
 
         AddDialog(new WaterfallDialog(nameof(WaterfallDialog), waterfallSteps));
-        AddDialog(new AttachmentPrompt(nameof(AttachmentPrompt), LabelPromptValidatorAsync));
+        AddDialog(new AttachmentPrompt(nameof(AttachmentPrompt), LabelImagePromptValidatorAsync));
         AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
-        AddDialog(new TextPrompt(nameof(TextPrompt)));
-        AddDialog(new ConfirmPrompt(nameof(ConfirmPrompt)));
 
         InitialDialogId = nameof(WaterfallDialog);
     }
 
-    private static async Task<DialogTurnResult> LabelStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+    private static async Task<DialogTurnResult> LabeImagelStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
     {
         var promptOptions = new PromptOptions
         {
@@ -48,19 +48,34 @@ public class DietDialog : ComponentDialog
         return await stepContext.PromptAsync(nameof(AttachmentPrompt), promptOptions, cancellationToken);
     }
 
+    private static async Task<DialogTurnResult> DietTypeStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+    {
+        stepContext.Values["labelImage"] = ((IList<Attachment>)stepContext.Result)?.FirstOrDefault();
+
+        var promptOptions = new PromptOptions
+        {
+            Prompt = MessageFactory.Text("Thank you. Please choose your diet type now."),
+            Choices = ChoiceFactory.ToChoices(Enum.GetNames<DietTypes>()),
+        };
+
+        return await stepContext.PromptAsync(nameof(ChoicePrompt), promptOptions, cancellationToken);
+    }
+
     private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
     {
-        stepContext.Values["label"] = ((IList<Attachment>)stepContext.Result)?.FirstOrDefault();
+        stepContext.Values["dietType"] = ((FoundChoice)stepContext.Result).Value;
 
-        await stepContext.Context.SendActivityAsync(MessageFactory.Text("Thanks. Please wait while the label is analyzed."), cancellationToken);
+        await stepContext.Context.SendActivityAsync(
+            MessageFactory.Text("Thanks. Please wait while the label image is analyzed."), cancellationToken);
 
-        var label = (Attachment)stepContext.Values["label"];
+        var labelImage = (Attachment)stepContext.Values["labelImage"];
+        var dietType = (string)stepContext.Values["dietType"];
 
-        if (label is not null)
+        if (labelImage is not null)
         {
             try
             {
-                var extractedText = await _computerVisionService.ExtractText(label.ContentUrl, cancellationToken);
+                var extractedText = await _computerVisionService.ExtractText(labelImage.ContentUrl, cancellationToken);
                 //await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(label, "This is your label."), cancellationToken);
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(extractedText), cancellationToken);
             }
@@ -74,7 +89,7 @@ public class DietDialog : ComponentDialog
         return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
     }
 
-    private static async Task<bool> LabelPromptValidatorAsync(
+    private static async Task<bool> LabelImagePromptValidatorAsync(
         PromptValidatorContext<IList<Attachment>> promptContext,
         CancellationToken cancellationToken)
     {
