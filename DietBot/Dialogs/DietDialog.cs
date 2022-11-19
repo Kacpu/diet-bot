@@ -1,5 +1,6 @@
 ﻿using DietBot.ComputerVision;
-using DietBot.Models;
+using DietBot.Diets.Models;
+using DietBot.Diets.Service;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
@@ -16,10 +17,15 @@ public class DietDialog : ComponentDialog
 {
     //private readonly IStatePropertyAccessor<Diet> _dietAccessor;
     private readonly IComputerVisionService _computerVisionService;
+    private readonly IDietService _dietService;
 
-    public DietDialog(UserState userState, IComputerVisionService computerVisionService) : base(nameof(DietDialog))
+    public DietDialog(
+        UserState userState,
+        IComputerVisionService computerVisionService,
+        IDietService dietService) : base(nameof(DietDialog))
     {
         _computerVisionService = computerVisionService;
+        _dietService = dietService;
 
         //_dietAccessor = userState.CreateProperty<Diet>("Diet");
 
@@ -76,10 +82,11 @@ public class DietDialog : ComponentDialog
             try
             {
                 var extractedText = await _computerVisionService.ExtractText(labelImage.ContentUrl, cancellationToken);
+                await _dietService.GetDiet(dietType, new string[] { "water" });
                 //await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(label, "This is your label."), cancellationToken);
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(extractedText), cancellationToken);
             }
-            catch
+            catch (Exception ex)
             {
                 await stepContext.Context.SendActivityAsync(
                     MessageFactory.Text("A label was saved but could not be displayed here."), cancellationToken);

@@ -4,9 +4,14 @@
 // Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.18.1
 
 using DietBot.ComputerVision;
+using DietBot.CosmosDB;
 using DietBot.Dialogs;
+using DietBot.Diets.Repository;
+using DietBot.Diets.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
@@ -56,17 +61,36 @@ namespace DietBot
             services.Configure<ComputerVisionOptions>(
                 Configuration.GetSection(ComputerVisionOptions.Section));
 
+            services.Configure<CosmosDbOptions>(
+                Configuration.GetSection(CosmosDbOptions.Section));
+
+            var cosmosOptions = Configuration.GetSection(CosmosDbOptions.Section).Get<CosmosDbOptions>();
+            var cosmosClient = new CosmosClientBuilder(cosmosOptions.Endpoint, cosmosOptions.AuthKey)
+                .WithSerializerOptions(new CosmosSerializationOptions()
+                {
+                    PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+                })
+                .Build();
+
+            services.AddSingleton(cosmosClient);
+
+            services.AddSingleton<IDietRepository, DietCosmosRepository>();
+
+            services.AddSingleton<IDietService, DietService>();
+
+            services.AddSingleton<IStorage, MemoryStorage>();
+
             // Use partitioned CosmosDB for storage, instead of in-memory storage.
-            services.AddSingleton<IStorage>(
-                new CosmosDbPartitionedStorage(
-                    new CosmosDbPartitionedStorageOptions
-                    {
-                        CosmosDbEndpoint = Configuration.GetValue<string>("CosmosDbEndpoint"),
-                        AuthKey = Configuration.GetValue<string>("CosmosDbAuthKey"),
-                        DatabaseId = Configuration.GetValue<string>("CosmosDbDatabaseId"),
-                        ContainerId = Configuration.GetValue<string>("CosmosDbContainerId"),
-                        CompatibilityMode = false,
-                    }));
+            //services.AddSingleton<IStorage>(
+            //    new CosmosDbPartitionedStorage(
+            //        new CosmosDbPartitionedStorageOptions
+            //        {
+            //            CosmosDbEndpoint = cosmosOptions.Endpoint,
+            //            AuthKey = cosmosOptions.AuthKey,
+            //            DatabaseId = cosmosOptions.DatabaseId,
+            //            ContainerId = cosmosOptions.ContainerId,
+            //            CompatibilityMode = false,
+            //        }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

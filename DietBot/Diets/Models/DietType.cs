@@ -1,4 +1,4 @@
-﻿namespace DietBot.Models;
+﻿namespace DietBot.Diets.Models;
 
 public enum DietType
 {
