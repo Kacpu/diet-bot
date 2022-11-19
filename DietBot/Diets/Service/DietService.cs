@@ -1,5 +1,6 @@
 ﻿using DietBot.Diets.Models;
 using DietBot.Diets.Repository;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,12 +15,13 @@ public class DietService : IDietService
         _dietRepository = dietRepository;
     }
 
-    public async Task GetDiet(DietType dietType, string[] ingredients)
+    public async Task<bool> IsFoodValid(DietType dietType, string foodLabel)
     {
-        await _dietRepository.GetDiet(dietType, ingredients);
+        var ingredients = await _dietRepository.GetDietIngredients(dietType);
+        return true;
     }
 
-    public List<string> ParseIngredients(string text)
+    private List<string> ParseIngredients(string foodLabel)
     {
         return new List<string>();
     }

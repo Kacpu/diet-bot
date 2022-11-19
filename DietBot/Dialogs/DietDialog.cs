@@ -48,7 +48,7 @@ public class DietDialog : ComponentDialog
         var promptOptions = new PromptOptions
         {
             Prompt = MessageFactory.Text("Please attach a label image."),
-            RetryPrompt = MessageFactory.Text("The label must be a jpeg/png image file."),
+            RetryPrompt = MessageFactory.Text("The label must be a jpeg/png image file. Please attach a valid label image."),
         };
 
         return await stepContext.PromptAsync(nameof(AttachmentPrompt), promptOptions, cancellationToken);
@@ -61,6 +61,7 @@ public class DietDialog : ComponentDialog
         var promptOptions = new PromptOptions
         {
             Prompt = MessageFactory.Text("Thank you. Please choose your diet type now."),
+            RetryPrompt = MessageFactory.Text("Please choose your diet type."),
             Choices = ChoiceFactory.ToChoices(Enum.GetNames<DietType>()),
         };
 
@@ -82,21 +83,26 @@ public class DietDialog : ComponentDialog
             try
             {
                 var extractedText = await _computerVisionService.ExtractText(labelImage.ContentUrl, cancellationToken);
-                await _dietService.GetDiet(dietType, new string[] { "water" });
-                //await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(label, "This is your label."), cancellationToken);
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(extractedText), cancellationToken);
+                var isFoodValid = await _dietService.IsFoodValid(dietType, extractedText);
+                var message = isFoodValid
+                    ? $"This food is valid for {dietType} diet."
+                    : $"This food is invalid for {dietType} diet.";
+
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
             }
             catch (Exception ex)
             {
                 await stepContext.Context.SendActivityAsync(
-                    MessageFactory.Text("A label was saved but could not be displayed here."), cancellationToken);
+                    MessageFactory.Text("Sorry, something went wrong. Please try again."), cancellationToken);
+
+                return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
             }
         }
 
         return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
     }
 
-    private static async Task<bool> LabelImagePromptValidatorAsync(
+    private static Task<bool> LabelImagePromptValidatorAsync(
         PromptValidatorContext<IList<Attachment>> promptContext,
         CancellationToken cancellationToken)
     {
@@ -116,16 +122,9 @@ public class DietDialog : ComponentDialog
             promptContext.Recognized.Value = validImages;
 
             // If none of the attachments are valid images, the retry prompt should be sent.
-            return validImages.Any();
+            return Task.FromResult(validImages.Any());
         }
-        else
-        {
-            //await promptContext.Context.SendActivityAsync(
-            //    "No attachments received. Proceeding without a profile picture...",
-            //    cancellationToken: cancellationToken);
 
-            // We can return true from a validator function even if Recognized.Succeeded is false.
-            return false;
-        }
+        return Task.FromResult(false);
     }
 }

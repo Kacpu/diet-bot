@@ -3,6 +3,7 @@ using DietBot.Diets.Models;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,28 +20,29 @@ public class DietCosmosRepository : IDietRepository
             cosmosDbOptions.Value.ContainerId);
     }
 
-    public async Task GetDiet(DietType dietType, string[] ingredients)
+    public async Task<IEnumerable<IngredientModel>> GetDietIngredients(DietType dietType)
     {
-        IOrderedQueryable<DietModel> queryable = _container.GetItemLinqQueryable<DietModel>();
+        var queryable = _container.GetItemLinqQueryable<DietModel>();
 
-        var matches = queryable
+        var conditionQuery = queryable
             .Where(d => d.Type.ToString().ToLower() == dietType.ToString().ToLower());
-            //.Select(d => new { d.Ingredients })
-            //.Where(d => d.)
-            //.Where(d => d.Ingredients.Except(ingredients));
 
-        using FeedIterator<DietModel> linqFeed = matches.ToFeedIterator();
+        using var linqFeed = conditionQuery.ToFeedIterator();
+
+        var ingredients = new List<IngredientModel>();
 
         // Iterate query result pages
         while (linqFeed.HasMoreResults)
         {
-            FeedResponse<DietModel> response = await linqFeed.ReadNextAsync();
+            var response = await linqFeed.ReadNextAsync();
 
             // Iterate query results
-            foreach (DietModel item in response)
+            foreach (var diet in response)
             {
-                var a = item;
+                ingredients.AddRange(diet.Ingredients);
             }
         }
+
+        return ingredients;
     }
 }
