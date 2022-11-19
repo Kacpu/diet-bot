@@ -54,7 +54,7 @@ public class ComputerVisionService : IComputerVisionService
         {
             foreach (Line line in page.Lines)
             {
-                sb.AppendLine(line.Text);
+                sb.Append(line.Text);
             }
         }
 

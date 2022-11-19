@@ -72,8 +72,8 @@ public class DietDialog : ComponentDialog
     {
         stepContext.Values["dietType"] = ((FoundChoice)stepContext.Result).Value;
 
-        await stepContext.Context.SendActivityAsync(
-            MessageFactory.Text("Thanks. Please wait while the label image is analyzed."), cancellationToken);
+        //await stepContext.Context.SendActivityAsync(
+        //    MessageFactory.Text("Thanks. Please wait while the label image is analyzed."), cancellationToken);
 
         var labelImage = (Attachment)stepContext.Values["labelImage"];
         var isDietType = Enum.TryParse<DietType>((string)stepContext.Values["dietType"], out var dietType);
@@ -83,12 +83,9 @@ public class DietDialog : ComponentDialog
             try
             {
                 var extractedText = await _computerVisionService.ExtractText(labelImage.ContentUrl, cancellationToken);
-                var isFoodValid = await _dietService.IsFoodValid(dietType, extractedText);
-                var message = isFoodValid
-                    ? $"This food is valid for {dietType} diet."
-                    : $"This food is invalid for {dietType} diet.";
+                var resultMessage = await _dietService.AnalyzeFood(dietType, extractedText);
 
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(resultMessage), cancellationToken);
             }
             catch (Exception ex)
             {
@@ -99,7 +96,12 @@ public class DietDialog : ComponentDialog
             }
         }
 
-        return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+        await stepContext.Context.SendActivityAsync(
+            MessageFactory.Text("You can check next food now."), cancellationToken);
+
+        return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
+
+        //return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
     }
 
     private static Task<bool> LabelImagePromptValidatorAsync(

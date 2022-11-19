@@ -40,7 +40,7 @@ public class DietBot : ActivityHandler
         ITurnContext<IConversationUpdateActivity> turnContext,
         CancellationToken cancellationToken = default)
     {
-        var welcomeText = "Hello and welcome!";
+        var welcomeText = "Hi, I am diet bot. I can help you with checking if your food is good for one of diets.";
         foreach (var member in membersAdded)
         {
             if (member.Id != turnContext.Activity.Recipient.Id)

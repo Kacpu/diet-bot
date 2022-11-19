@@ -5,5 +5,5 @@ namespace DietBot.Diets.Service;
 
 public interface IDietService
 {
-    Task<bool> IsFoodValid(DietType dietType, string foodLabel);
+    Task<string> AnalyzeFood(DietType dietType, string foodLabel);
 }
