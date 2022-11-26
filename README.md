@@ -31,11 +31,11 @@ Bot umożliwia:
 
 ## Schemat działania
 1. Użytkownik nawiązuje kontakt z botem.
-2. Bot prosi o zdjęcie etykiety produktu.
+2. Bot wysyła prosbę o zdjęcie etykiety produktu.
 3. Użytkownik przesyła zdjęcie.
 4. Bot wysyła prośbę o wybranie pożądanej diety.
 5. Użytkownik wybiera dietę
-6. Bot wysyła wynik oceny, czy produkt jest odpowiedni dla wybranej diety
+6. Bot wysyła wynik oceny czy produkt jest odpowiedni dla wybranej diety
 
 ## Architektura
 ![diagram](https://raw.githubusercontent.com/Kacpu/diet-bot/master/img/architecture.png "diagram")
