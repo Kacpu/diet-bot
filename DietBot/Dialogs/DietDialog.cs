@@ -54,18 +54,44 @@ public class DietDialog : ComponentDialog
         return await stepContext.PromptAsync(nameof(AttachmentPrompt), promptOptions, cancellationToken);
     }
 
-    private static async Task<DialogTurnResult> DietTypeStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+    private async Task<DialogTurnResult> DietTypeStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
     {
-        stepContext.Values["labelImage"] = ((IList<Attachment>)stepContext.Result)?.FirstOrDefault();
+        var labelImage = ((IList<Attachment>)stepContext.Result)?.FirstOrDefault();
 
-        var promptOptions = new PromptOptions
+        if (labelImage is null)
         {
-            Prompt = MessageFactory.Text("Thank you. Please choose your diet type now."),
-            RetryPrompt = MessageFactory.Text("Please choose your diet type."),
-            Choices = ChoiceFactory.ToChoices(Enum.GetNames<DietType>()),
-        };
 
-        return await stepContext.PromptAsync(nameof(ChoicePrompt), promptOptions, cancellationToken);
+        }
+
+        try
+        {
+            var extractedText = await _computerVisionService.ExtractText(labelImage.ContentUrl, cancellationToken);
+            var isFoodLabel = _dietService.IsFoodLabel(extractedText);
+            stepContext.Values["extractedText"] = extractedText;
+
+            if (!isFoodLabel)
+            {
+                var message = "Sorry, but I think that this is not food label. Please send proper image.";
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
+                return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
+            }
+
+            var promptOptions = new PromptOptions
+            {
+                Prompt = MessageFactory.Text("Thank you. Please choose your diet type now."),
+                RetryPrompt = MessageFactory.Text("Please choose your diet type."),
+                Choices = ChoiceFactory.ToChoices(Enum.GetNames<DietType>()),
+            };
+
+            return await stepContext.PromptAsync(nameof(ChoicePrompt), promptOptions, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            await stepContext.Context.SendActivityAsync(
+                MessageFactory.Text("Sorry, something went wrong. Please try again."), cancellationToken);
+
+            return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
+        }
     }
 
     private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -75,16 +101,14 @@ public class DietDialog : ComponentDialog
         //await stepContext.Context.SendActivityAsync(
         //    MessageFactory.Text("Thanks. Please wait while the label image is analyzed."), cancellationToken);
 
-        var labelImage = (Attachment)stepContext.Values["labelImage"];
+        var extractedText = (string)stepContext.Values["extractedText"];
         var isDietType = Enum.TryParse<DietType>((string)stepContext.Values["dietType"], out var dietType);
 
-        if (labelImage is not null && isDietType)
+        if (extractedText is not null && isDietType)
         {
             try
             {
-                var extractedText = await _computerVisionService.ExtractText(labelImage.ContentUrl, cancellationToken);
                 var resultMessage = await _dietService.AnalyzeFood(dietType, extractedText);
-
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(resultMessage), cancellationToken);
             }
             catch (Exception ex)

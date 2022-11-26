@@ -6,5 +6,5 @@ namespace DietBot.Diets.Repository;
 
 public interface IDietRepository
 {
-    Task<IEnumerable<IngredientModel>> GetDietIngredients(DietType dietType);
+    Task<IEnumerable<IngredientModel>> GetDietForbiddenIngredients(DietType dietType);
 }

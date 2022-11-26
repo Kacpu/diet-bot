@@ -15,32 +15,28 @@ public class DietService : IDietService
         _dietRepository = dietRepository;
     }
 
+    public bool IsFoodLabel(string foodLabel)
+    {
+        return foodLabel.Contains("Ingredients", StringComparison.InvariantCultureIgnoreCase);
+    }
+
     public async Task<string> AnalyzeFood(DietType dietType, string foodLabel)
     {
-        var parsedFoodLabel = foodLabel.Substring(
-            foodLabel.IndexOf("Ingredients", StringComparison.InvariantCultureIgnoreCase) + "Ingredients".Length);
-        var checkIngredients = parsedFoodLabel.Split(',');
+        var parsedFoodLabel = foodLabel[
+            (foodLabel.IndexOf("Ingredients", StringComparison.InvariantCultureIgnoreCase) + "Ingredients".Length)..];
 
-        var ingredients = await _dietRepository.GetDietIngredients(dietType);
+        var ingredientsToCheck = parsedFoodLabel.Split(',');
 
-        var validIngredientsCount = 0;
+        var forbiddenIngredients = await _dietRepository.GetDietForbiddenIngredients(dietType);
 
-        foreach (var checkIngredient in checkIngredients)
+        foreach (var ingredientToCheck in ingredientsToCheck)
         {
-            if (ingredients.Any(i => i.Name.ToLower().Contains(checkIngredient.ToLower())))
+            if (forbiddenIngredients.Any(i => i.Name.ToLower().Contains(ingredientToCheck.ToLower())))
             {
-                validIngredientsCount++;
+                return "This food is not good for chosen diet. 👎";
             }
         }
 
-        double value = (double)validIngredientsCount / checkIngredients.Length;
-
-        return value switch
-        {
-            < 0.25 => "This food is not good for chosen diet. 👎",
-            < 0.50 => "This food is doubtful for chosen diet. 🤔",
-            < 0.75 => "This food should be good for chosen diet. 👍",
-            _ => "This food is good for your diet. 😍",
-        };
+        return "This food is good for your diet. 👍\"";
     }
 }

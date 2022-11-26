@@ -20,7 +20,7 @@ public class DietCosmosRepository : IDietRepository
             cosmosDbOptions.Value.ContainerId);
     }
 
-    public async Task<IEnumerable<IngredientModel>> GetDietIngredients(DietType dietType)
+    public async Task<IEnumerable<IngredientModel>> GetDietForbiddenIngredients(DietType dietType)
     {
         var queryable = _container.GetItemLinqQueryable<DietModel>();
 
