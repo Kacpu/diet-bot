@@ -1,5 +1,18 @@
+ # Diet Bot: bot dietetyczny
+ * [Cel](#cel)
+  * [Opis funkcjonalności](#opis-funkcjonalności)
+  * [Schemat działania](#schemat-działania)
+  * [Architektura](#architektura)
+  * [Demo](#demo)
+  * [Opis wybranych serwisów](#opis-wybranych-serwisów)
+    + [Bot services](#bot-services)
+    + [App services](#app-services)
+    + [Cosmos DB](#cosmos-db)
+    + [Cognitive Services](#cognitive-services)
+  * [Stos technologiczny](#stos-technologiczny)
+  * [Zespół](#zespół)
 
-# Diet Bot: bot dietetyczny
+
 ## Cel
 
 Stworzenie bota służącego do
@@ -24,14 +37,13 @@ Bot umożliwia:
 5. Użytkownik wybiera dietę
 6. Bot wysyła wynik oceny, czy produkt jest odpowiedni dla wybranej diety
 
-
-## Demo
-[Wideo na youtube]()
-
 ## Architektura
 ![diagram](https://raw.githubusercontent.com/Kacpu/diet-bot/master/img/architecture.png "diagram")
 
 Bot Service wykorzystuje CosmosDB do pobierania danych dotyczących diet oraz Cognitive Service (OCR) do pozyskiwania listy składników ze zdjeć.
+
+## Demo
+[Wideo na youtube]()
 
 ## Opis wybranych serwisów
 ### Bot services
