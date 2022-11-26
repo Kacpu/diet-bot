@@ -31,12 +31,13 @@ public class DietService : IDietService
 
         foreach (var ingredientToCheck in ingredientsToCheck)
         {
-            if (forbiddenIngredients.Any(i => i.Name.ToLower().Contains(ingredientToCheck.ToLower())))
+            if (forbiddenIngredients.Any(i => i.Name.Contains(ingredientToCheck, StringComparison.InvariantCultureIgnoreCase)
+                || ingredientToCheck.Contains(i.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 return "This food is not good for chosen diet. 👎";
             }
         }
 
-        return "This food is good for your diet. 👍\"";
+        return "This food is good for your diet. 👍";
     }
 }

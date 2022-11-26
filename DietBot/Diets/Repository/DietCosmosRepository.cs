@@ -25,7 +25,7 @@ public class DietCosmosRepository : IDietRepository
         var queryable = _container.GetItemLinqQueryable<DietModel>();
 
         var conditionQuery = queryable
-            .Where(d => d.Type.ToString().ToLower() == dietType.ToString().ToLower());
+            .Where(d => d.Type.ToString().ToLower() == dietType.ToString().ToLower() && d.Exclude == true);
 
         using var linqFeed = conditionQuery.ToFeedIterator();
 

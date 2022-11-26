@@ -60,7 +60,7 @@ public class DietDialog : ComponentDialog
 
         if (labelImage is null)
         {
-
+            return await SendErrorMessage(stepContext, cancellationToken);
         }
 
         try
@@ -71,10 +71,12 @@ public class DietDialog : ComponentDialog
 
             if (!isFoodLabel)
             {
-                var message = "Sorry, but I think that this is not food label. Please send proper image.";
+                var message = "Sorry, but I don't think that's a food label. Please send a suitable photo.";
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(message), cancellationToken);
                 return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
             }
+
+            await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(labelImage), cancellationToken);
 
             var promptOptions = new PromptOptions
             {
@@ -87,10 +89,7 @@ public class DietDialog : ComponentDialog
         }
         catch (Exception ex)
         {
-            await stepContext.Context.SendActivityAsync(
-                MessageFactory.Text("Sorry, something went wrong. Please try again."), cancellationToken);
-
-            return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
+            return await SendErrorMessage(stepContext, cancellationToken);
         }
     }
 
@@ -104,28 +103,26 @@ public class DietDialog : ComponentDialog
         var extractedText = (string)stepContext.Values["extractedText"];
         var isDietType = Enum.TryParse<DietType>((string)stepContext.Values["dietType"], out var dietType);
 
-        if (extractedText is not null && isDietType)
+        if (extractedText is null || !isDietType)
         {
-            try
-            {
-                var resultMessage = await _dietService.AnalyzeFood(dietType, extractedText);
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(resultMessage), cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                await stepContext.Context.SendActivityAsync(
-                    MessageFactory.Text("Sorry, something went wrong. Please try again."), cancellationToken);
+            return await SendErrorMessage(stepContext, cancellationToken);
+        }
 
-                return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
-            }
+        try
+        {
+            var resultMessage = await _dietService.AnalyzeFood(dietType, extractedText);
+
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(resultMessage), cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return await SendErrorMessage(stepContext, cancellationToken);
         }
 
         await stepContext.Context.SendActivityAsync(
             MessageFactory.Text("You can check next food now."), cancellationToken);
 
         return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
-
-        //return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
     }
 
     private static Task<bool> LabelImagePromptValidatorAsync(
@@ -152,5 +149,13 @@ public class DietDialog : ComponentDialog
         }
 
         return Task.FromResult(false);
+    }
+
+    private async Task<DialogTurnResult> SendErrorMessage(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+    {
+        await stepContext.Context.SendActivityAsync(
+            MessageFactory.Text("Sorry, something went wrong. Please try again."), cancellationToken);
+
+        return await stepContext.ReplaceDialogAsync(InitialDialogId, cancellationToken: cancellationToken);
     }
 }
