@@ -47,24 +47,24 @@ Bot Service wykorzystuje Cosmos DB do pobierania danych dotyczących diet oraz C
 ## Opis wybranych serwisów
 
 ### Bot Services
-[**Bot Services**](https://azure.microsoft.com/pl-pl/products/bot-services/) -- umożliwia tworzenie środowisk konwersacyjnych w prostu sposób. Zapewnia zintegrowane środowisko programistyczne do tworzenia botów zarówno bez pisania kodu, jak i przy pomocy Bot Framework SDK (dostępne w kilku językach np. JavaScript, Python, C#).
+[**Bot Services**](https://azure.microsoft.com/pl-pl/products/bot-services/) &#8211; umożliwia tworzenie środowisk konwersacyjnych w prostu sposób. Zapewnia zintegrowane środowisko programistyczne do tworzenia botów zarówno bez pisania kodu, jak i przy pomocy Bot Framework SDK (dostępne w kilku językach np. JavaScript, Python, C#).
 
 Podczas projektu stworzono bota przy użyciu SDK dla ASP.NET Core 6 oraz testowano go przy użyciu Bot Framework Emulator.
 
 ### App Services
-[**App Services**](https://azure.microsoft.com/pl-pl/products/app-service/) -- oparte o HTTP serwisy przeznaczone do hostowania aplikacji internetowych, RESTowych API i back-endu aplikacji mobilnych. Umożliwiają pisanie kodu w szerokiej gamie języków programowania i technologii.
+[**App Services**](https://azure.microsoft.com/pl-pl/products/app-service/) &#8211; oparte o HTTP serwisy przeznaczone do hostowania aplikacji internetowych, RESTowych API i back-endu aplikacji mobilnych. Umożliwiają pisanie kodu w szerokiej gamie języków programowania i technologii.
 
 W projekcie serwis ten wykorzystano w celu upublicznienia kodu odpowiedzialnego za logikę aplikacji oraz komunikację między botem, bazą danych a Cognitive Services.
 
 ### Cosmos DB
-[**Cosmos DB**](https://azure.microsoft.com/pl-pl/products/cosmos-db/) -- szybka, rozproszona i nierelacyjna baza danych, która skaluje w zależności od obciążenia. Umożliwia zamieszczanie danych, jako zestawy "dokumentów". 
+[**Cosmos DB**](https://azure.microsoft.com/pl-pl/products/cosmos-db/) &#8211; szybka, rozproszona i nierelacyjna baza danych, która skaluje w zależności od obciążenia. Umożliwia zamieszczanie danych, jako zestawy "dokumentów". 
 
 W projekcie była używana do zamieszczenia zestawu danych dostarczających informacji o dietach, oraz do pozyskiwania tych informacji przez bota.
 
 ### Cognitive Services
-[**Cognitive Services**](https://azure.microsoft.com/pl-pl/products/cognitive-services) -- zbiór usług w obrębie chmurowej platformy Microsoft Azure opartych o sztuczną inteligencję, które w prosty sposób, czyli bez specjalistycznej wiedzy z zakresu AI oraz analizy danych, umożliwiają aplikacjom w pewnym sensie zyskanie zdolności widzenia, słyszenia, mowy czy analizy.
+[**Cognitive Services**](https://azure.microsoft.com/pl-pl/products/cognitive-services) &#8211; zbiór usług w obrębie chmurowej platformy Microsoft Azure opartych o sztuczną inteligencję, które w prosty sposób, czyli bez specjalistycznej wiedzy z zakresu AI oraz analizy danych, umożliwiają aplikacjom w pewnym sensie zyskanie zdolności widzenia, słyszenia, mowy czy analizy.
 
-Podczas realizacji projektu wykorzystano część usługi związaną z rozpoznawaniem zdjęć, a mianowicie OCR -- Optical Character Recognition. Narzędzie to pozwala na odczytanie tekstu -- drukowanego lub pisanego ręcznie -- ze zdjęcia. W szczególności wykorzystane ono zostało do uzyskania listy składników z fotografii etykiety produktu spożywczego.
+Podczas realizacji projektu wykorzystano część usługi związaną z rozpoznawaniem zdjęć, a mianowicie OCR &#8211; Optical Character Recognition. Narzędzie to pozwala na odczytanie tekstu &#8211; drukowanego lub pisanego ręcznie &#8211; ze zdjęcia. W szczególności wykorzystane ono zostało do uzyskania listy składników z fotografii etykiety produktu spożywczego.
 
 ## Stos technologiczny
 
