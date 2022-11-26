@@ -47,9 +47,10 @@ Bot Service wykorzystuje CosmosDB do pobierania danych dotyczących diet oraz Co
 
 ## Opis wybranych serwisów
 ### Bot services
-[**Bot Services**](https://azure.microsoft.com/pl-pl/products/bot-services/) - serwisy umożliwiające tworzenie bota w przy użyciu SDK w kilku językach (javascript, .NET , python). Pozwalają na tworzenie interaktywnego czatu z użytkownikiem.
+[**Bot Services**](https://azure.microsoft.com/pl-pl/products/bot-services/) - umożliwia tworzenie środowisk konwersacyjnych w prostu sposób. Zapewnia zintegrowane środowisko programistyczne do tworzenia botów zarówno bez pisania kodu, jak i przy pomocy Bot Framework SDK (dostępne w kilku językach np. javascript, python, C#).
 
-Podczas tworzenia projektu wykorzystaliśmy wariant z użyciem .NET w wersji 6. 
+Podczas projektu stworzono bota przy użyciu SDK dla ASP.NET Core 6 oraz testowano go przy użyciu Bot Framework Emulator.
+
 ### App services
 [**App Services**](https://azure.microsoft.com/pl-pl/products/app-service/)
 
