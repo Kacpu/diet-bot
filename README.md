@@ -25,6 +25,9 @@ Bot umożliwia:
 6. Bot wysyła wynik oceny, czy produkt jest odpowiedni dla wybranej diety
 
 
+## Demo
+[Wideo na youtube]()
+
 ## Architektura
 ![diagram](https://raw.githubusercontent.com/Kacpu/diet-bot/master/img/architecture.png "diagram")
 
@@ -49,8 +52,11 @@ W projekcie była używana do zamieszczenia zestawu danych dostarczających info
 
 Podczas realizacji projektu wykorzystano część usługi związaną z rozpoznawaniem zdjęć, a mianowicie OCR -- Optical Character Recognition. Narzędzie to pozwala na odczytanie tekstu -- drukowanego lub pisanego ręcznie -- ze zdjęcia. W szczególności wykorzystane ono zostało do uzyskania listy składników z fotografii etykiety produktu spożywczego.
 
-## Demo
-[Wideo na youtube]()
+## Stos technologiczny
+
+W projekcie użyto:
+- ASP.NET
+
 ## Zespół
 <ul>
 <li>
