@@ -15,7 +15,7 @@
 
 ## Cel
 
-Stworzenie bota służącego do **klasyfikowania składników z etykiet produktów spożywczych według diety wybranej przez użytkownika**.
+Celem projektu było stworzenie bota służącego do **klasyfikowania składników z etykiet produktów spożywczych według diety wybranej przez użytkownika**.
 
 Użytkownik dzięki temu oszczędza czas na wyszukiwaniu składników, których nie jest pewien, czy należą do konkretnej diety.
 
@@ -68,7 +68,8 @@ Podczas realizacji projektu wykorzystano część usługi związaną z rozpoznaw
 
 ## Stos technologiczny
 
-ASP.NET 6.0
+- ASP.NET Core 6.0
+- Bot Framework SDK for C#
 
 ## Zespół
 <ul>
