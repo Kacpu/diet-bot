@@ -54,8 +54,7 @@ Podczas realizacji projektu wykorzystano część usługi związaną z rozpoznaw
 
 ## Stos technologiczny
 
-W projekcie użyto:
-- ASP.NET
+ASP.NET 6.0
 
 ## Zespół
 <ul>
