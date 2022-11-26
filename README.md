@@ -15,7 +15,7 @@ Bot umożliwia:
 - rozpoznawanie tekstu ze zdjęć etykiet
 - określenie, czy produkt jest odpowiedni dla wybranej diety
 
-## Scenariusz
+## Schemat działania
 1. Użytkownik nawiązuje kontakt z botem.
 2. Bot prosi o zdjęcie etykiety produktu.
 3. Użytkownik przesyła zdjęcie.
@@ -40,7 +40,7 @@ Bot Service wykorzystuje CosmosDB do pobierania danych dotyczących diet oraz Co
 <li>projektowanie działania</li>
 </ul>
 <li> 
-<a href="#">Jakub Gromiński</a>
+<a href="https://github.com/jgrominski">Jakub Gromiński</a>
 <ul>
 <li>research danych</li>
 <li> przygotowanie cognitive service</li>
