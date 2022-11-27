@@ -42,7 +42,7 @@ Bot umożliwia:
 Bot Service wykorzystuje Cosmos DB do pobierania danych dotyczących diet oraz Cognitive Service (OCR) do pozyskiwania listy składników ze zdjeć.
 
 ## Demo
-[Wideo na youtube]()
+[Wideo na youtube](https://youtu.be/W96yJjGmNKg)
 
 ## Opis wybranych serwisów
 
