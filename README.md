@@ -1,4 +1,4 @@
- # Diet Bot: bot dietetyczny
+# Diet Bot: bot dietetyczny
  * [Cel](#cel)
   * [Opis funkcjonalności](#opis-funkcjonalności)
   * [Schemat działania](#schemat-działania)
@@ -42,7 +42,7 @@ Bot umożliwia:
 Bot Service wykorzystuje Cosmos DB do pobierania danych dotyczących diet oraz Cognitive Service (OCR) do pozyskiwania listy składników ze zdjeć.
 
 ## Demo
-[Wideo na youtube](https://youtu.be/W96yJjGmNKg)
+[![Wideo na youtube](https://img.youtube.com/vi/W96yJjGmNKg/0.jpg)](https://youtu.be/W96yJjGmNKg)
 
 ## Opis wybranych serwisów
 
