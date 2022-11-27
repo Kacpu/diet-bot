@@ -15,7 +15,7 @@
 
 ## Cel
 
-Celem projektu było stworzenie bota służącego do **klasyfikowania składników z etykiet produktów spożywczych według diety wybranej przez użytkownika**.
+Celem projektu było stworzenie bota służącego do **sprawdzania, czy składniki z etykiet produktów spożywczych są odpowiednie dla wybranej przez użytkownika diety**.
 
 Użytkownik dzięki temu oszczędza czas na wyszukiwaniu składników, których nie jest pewien, czy należą do konkretnej diety.
 
